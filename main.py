@@ -126,8 +126,8 @@ def send_mail_ozon(
 <p>Оценка клиента: {case['rating']}</p>
 <p>Статус заказа: {case['orderDeliveryType']}</p>
 <p>Название бренда: {case['product']['brand_info']['name']}</p>
-<p>ID вопроса: {case['id']}</p>
-<p>Дата поступления вопроса: {case['published_at']}</p>
+<p>ID отзыва: {case['id']}</p>
+<p>Дата поступления отзыва: {case['published_at']}</p>
 <p>Артикул на OZON: {case['sku']}</p>
 <p>Артикул наш сайт: {case['product']['offer_id']}</p>
 <p>Название товара: {case['product']['title']}</p>
