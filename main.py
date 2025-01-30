@@ -5,22 +5,15 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-#
-#
-#
 
-
-company_id = "123456"  # id компании, можно посмотреть на странице компании (например https://www.ozon.ru/seller/ooo-mebelnaya-fabrika-volzhanka-1234/products/?miniapp=seller_1234 - id компании 1234)
-fromaddr = "example1@mail.ru"  # почта, с которой будет уходить письмо
-mypass = "password"  # пароль от почты для внешних приложений. Для mail.ru брать по ссылке - https://account.mail.ru/user/2-step-auth/passwords
-toaddr = "example2@mail.ru"  # почта, на которую отправлять письмо
-review_sum = 10  # количество кейсов, которые необходимо отправить (1 кейс = 10 отзывов)
-cookie = "cookie"  # куки
-
-
-#
-#
-#
+#==========================================================#
+COMPANY_ID = "123456"  # id компании, можно посмотреть на странице компании (например https://www.ozon.ru/seller/ooo-mebelnaya-fabrika-volzhanka-1234/products/?miniapp=seller_1234 - id компании 1234)
+FROM_ADDR = "example1@mail.ru"  # почта, с которой будет уходить письмо
+MAIL_PASSWORD = "password"  # пароль от почты для внешних приложений. Для mail.ru брать по ссылке - https://account.mail.ru/user/2-step-auth/passwords
+TO_ADDR = "example2@mail.ru"  # почта, на которую отправлять письмо
+REVIEW_SUM = 10  # количество кейсов, которые необходимо отправить (1 кейс = 10 отзывов)
+COOKIE = "cookie"  # куки
+#==========================================================#
 
 
 # Получает отзывы с платформы Ozon через API
@@ -38,7 +31,7 @@ def get_rate(value_cases: int, cookie: str) -> list:
         "sec-fetch-mode": "cors",
         "sec-fetch-site": "same-origin",
         "x-o3-app-name": "seller-ui",
-        "x-o3-company-id": company_id,
+        "x-o3-company-id": COMPANY_ID,
         "x-o3-language": "ru",
         "x-o3-page-type": "review",
         "cookie": cookie,
@@ -53,7 +46,7 @@ def get_rate(value_cases: int, cookie: str) -> list:
         "sort": {"sort_by": "PUBLISHED_AT", "sort_direction": "DESC"},
         "company_type": "seller",
         "filter": {"interaction_status": ["NOT_VIEWED"]},
-        "company_id": company_id,
+        "company_id": COMPANY_ID,
         "pagination_last_timestamp": last_timestamp,
         "pagination_last_uuid": last_id,
     }
@@ -105,9 +98,7 @@ def get_rate(value_cases: int, cookie: str) -> list:
 
 
 # Отправляет отзывы на указанный email
-def send_mail_ozon(
-    value: int, cookie: str, fromaddr: str, toaddr: str, mypass: str
-) -> None:
+def send_mail_ozon(value: int, cookie: str) -> None:
     cases = get_rate(value, cookie)
     if not cases:
         print(
@@ -132,11 +123,11 @@ def send_mail_ozon(
 <p>Артикул наш сайт: {case['product']['offer_id']}</p>
 <p>Название товара: {case['product']['title']}</p>
 """
-        print(f"Начинаю отправку сообщения(кейса) на email {toaddr}.")
+        print(f"Начинаю отправку сообщения(кейса) на email {TO_ADDR}.")
 
         msg = MIMEMultipart()
-        msg["From"] = fromaddr
-        msg["To"] = toaddr
+        msg["From"] = FROM_ADDR
+        msg["To"] = TO_ADDR
         msg["Subject"] = tema
         msg.attach(MIMEText(body, "html"))
 
@@ -146,9 +137,9 @@ def send_mail_ozon(
         for _ in range(max_retries):
             try:
                 server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
-                server.login(fromaddr, mypass)
+                server.login(FROM_ADDR, MAIL_PASSWORD)
                 text = msg.as_string()
-                server.sendmail(fromaddr, toaddr, text)
+                server.sendmail(FROM_ADDR, TO_ADDR, text)
                 server.quit()
                 case_sent = True
                 current_index = cases.index(case)
@@ -173,4 +164,4 @@ def send_mail_ozon(
 
 
 if __name__ == "__main__":
-    send_mail_ozon(review_sum, cookie, fromaddr, toaddr, mypass)
+    send_mail_ozon(REVIEW_SUM, COOKIE)
