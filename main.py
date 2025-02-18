@@ -1,19 +1,19 @@
-import requests
-import time
 import random
 import smtplib
+import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+import requests
 
-#==========================================================#
+# ==========================================================#
 COMPANY_ID = "123456"  # id компании, можно посмотреть на странице компании (например https://www.ozon.ru/seller/ooo-mebelnaya-fabrika-volzhanka-1234/products/?miniapp=seller_1234 - id компании 1234)
 FROM_ADDR = "example1@mail.ru"  # почта, с которой будет уходить письмо
 MAIL_PASSWORD = "password"  # пароль от почты для внешних приложений. Для mail.ru брать по ссылке - https://account.mail.ru/user/2-step-auth/passwords
 TO_ADDR = "example2@mail.ru"  # почта, на которую отправлять письмо
 REVIEW_SUM = 10  # количество кейсов, которые необходимо отправить (1 кейс = 10 отзывов)
 COOKIE = "cookie"  # куки
-#==========================================================#
+# ==========================================================#
 
 
 # Получает отзывы с платформы Ozon через API
@@ -82,16 +82,16 @@ def get_rate(value_cases: int, cookie: str) -> list:
                 print(f"Ошибка запроса: {err}")
                 retries += 1
                 if retries <= max_retries:
-                    print(f"Повторный запрос через 30 секунд...")
+                    print("Повторный запрос через 30 секунд...")
                     time.sleep(30)
                 else:
                     print(
-                        f"Все повторные запросы исчерпаны. Буду отправлять то, что успел получить."
+                        "Все повторные запросы исчерпаны. Буду отправлять то, что успел получить."
                     )
                     return all_cases
             except Exception as err:
                 print(f"Неизвестная ошибка: {err}")
-                print(f"Повторный запрос через 30 секунд...")
+                print("Повторный запрос через 30 секунд...")
                 time.sleep(30)
                 break
     return all_cases
@@ -156,7 +156,7 @@ def send_mail_ozon(value: int, cookie: str) -> None:
                 retry_delay = 2  # задержка между попытками в секундах
                 time.sleep(retry_delay)
         else:
-            print(f"Все попытки отправки письма не увенчались успехом. Ошибка.")
+            print("Все попытки отправки письма не увенчались успехом. Ошибка.")
         if case_sent:
             sent_cases += 1
         time.sleep(1)
